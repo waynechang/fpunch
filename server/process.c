@@ -94,7 +94,7 @@ int process_send(char *buf, int serverfd, struct sockaddr_in *client)
 	return 0;
 }
 
-int fpunch_process(int serverfd)
+int fpunchd_process(int serverfd)
 {
         char buf[BUF_LEN];
         struct sockaddr_in client;
