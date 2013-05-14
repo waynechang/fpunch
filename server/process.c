@@ -56,7 +56,7 @@ int process_new(char *buf, int serverfd, struct sockaddr_in *client)
 		return 0;
 	}
 
-        memcpy(&s.sa, &client, sizeof(struct sockaddr));
+        memcpy(&s.sa, client, sizeof(struct sockaddr));
         s.state = STATE_LISTEN;
 
         session_add(&s);
