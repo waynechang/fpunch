@@ -1,4 +1,4 @@
 fpunch
 ======
 
-file transfer using udp hole-punching with a proxy backup
+file transfer using udp hole-punching
