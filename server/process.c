@@ -42,7 +42,6 @@ int process_new(char *buf, int serverfd, struct sockaddr_in *client)
         size_t len;
 	
         assert(SESSION_NAME_LEN < BUF_LEN - 1);
-
         len = strnlen(&buf[1], SESSION_NAME_LEN);
         if (len == SESSION_NAME_LEN || len == 0) {
 		fprintf(stderr, "process_new: bad data");
@@ -56,7 +55,7 @@ int process_new(char *buf, int serverfd, struct sockaddr_in *client)
 		return 0;
 	}
 
-        memcpy(&s.sa, client, sizeof(struct sockaddr));
+        memcpy(&s.sa, client, sizeof(struct sockaddr_in));
         s.state = STATE_LISTEN;
 
         session_add(&s);
@@ -94,6 +93,36 @@ int process_send(char *buf, int serverfd, struct sockaddr_in *client)
 	return 0;
 }
 
+int process_ack(char *buf, int serverfd, struct sockaddr_in *client)
+{
+        session s;
+        size_t len;
+
+        assert(SESSION_NAME_LEN < BUF_LEN - 1);
+        len = strnlen(&buf[1], SESSION_NAME_LEN);
+        if (len == SESSION_NAME_LEN || len == 0) {
+		fprintf(stderr, "process_ack: bad data");
+		return -1;
+        }
+
+        memset(&s, 0, sizeof(session));
+        strcpy(s.name, &buf[1]);
+	if (session_get(&s) == -1) {
+		reply_str(STATE_ERROR, "name does not exist", serverfd, client);
+		return 0;
+	}
+        memcpy(&s.sa, client, sizeof(struct sockaddr));
+        s.state = STATE_LISTEN;
+
+        session_update(&s);
+        session_print(stdout);
+
+        s.name[0] = '0' + rand() % 10;       
+	reply_str(STATE_ACK, s.name, serverfd, client);
+
+        return 0;
+}
+
 int fpunchd_process(int serverfd)
 {
         char buf[BUF_LEN];
@@ -121,7 +150,6 @@ int fpunchd_process(int serverfd)
 		rv = process_new(buf, serverfd, &client);
 		if (rv == -1) {
 			fprintf(stderr, "process_new() failed\n");
-			return -1;
 		}
 		break;
 
@@ -129,10 +157,14 @@ int fpunchd_process(int serverfd)
 		rv = process_send(buf, serverfd, &client);
 		if (rv == -1) {
 			fprintf(stderr, "process_send() failed\n");
-			return -1;
 		}
 		break;
 	case STATE_ACK:
+		rv = process_ack(buf, serverfd, &client);
+		if (rv == -1) {
+			fprintf(stderr, "process_ack() failed\n");
+		}
+		break;
 	case STATE_LISTEN:
 	case STATE_TRANSFER:
 	case STATE_FIN:

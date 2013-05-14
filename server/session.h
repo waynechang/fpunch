@@ -12,6 +12,7 @@
 #define STATE_FIN	4
 #define STATE_SEND	5
 #define STATE_ERROR	6
+#define STATE_KEEPALIVE 7
 
 typedef struct session {
 	char name[SESSION_NAME_LEN];
@@ -27,6 +28,7 @@ int session_add(const session *s);
 int session_remove(const session *s);
 int session_get(session *s);
 int session_update(const session *s);
+int session_keepalive();
 
 #endif
 
