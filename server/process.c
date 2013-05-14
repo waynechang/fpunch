@@ -111,7 +111,7 @@ int process_ack(char *buf, int serverfd, struct sockaddr_in *client)
 		reply_str(STATE_ERROR, "name does not exist", serverfd, client);
 		return 0;
 	}
-        memcpy(&s.sa, client, sizeof(struct sockaddr));
+        memcpy(&s.sa, client, sizeof(struct sockaddr_in));
         s.state = STATE_LISTEN;
 
         session_update(&s);
