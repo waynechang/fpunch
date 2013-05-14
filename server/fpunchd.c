@@ -12,7 +12,7 @@
 #include "fpunchd.h"
 #include "process.h"
 
-int receive(int serverfd)
+int fpunchd_receive(int serverfd)
 {
 	int rv;
 	fd_set rfds;
@@ -35,7 +35,7 @@ int receive(int serverfd)
 	return 0;
 }
 
-int listen(uint16_t port)
+int fpunchd_listen(uint16_t port)
 {
 	int serverfd, rv;
 	struct sockaddr_in server;
@@ -60,7 +60,7 @@ int listen(uint16_t port)
 	}
 
 	for (;;) {
-		rv = receive(serverfd);
+		rv = fpunchd_receive(serverfd);
 		if (rv == -1) {
 			fprintf(stderr, "fpunch_receive() failed\n");
 		}
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	rv = listen(port);
+	rv = fpunchd_listen(port);
 	if (rv == -1) {
 		fprintf(stderr, "fpunch_serve() failed\n");
 		exit(EXIT_FAILURE);
