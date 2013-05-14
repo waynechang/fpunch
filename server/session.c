@@ -105,3 +105,35 @@ int session_print(FILE *fp)
 	return 0;
 }
 
+int session_keepalive()
+{
+        session *p;
+        ssize_t n;
+        char buf[32];
+        int sockfd;
+
+        sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+        if (sockfd == -1) {
+                perror("socket");
+                return -1;
+        }
+
+        buf[0] = STATE_KEEPALIVE; 
+        strcpy(&buf[1], "keepalive");
+
+        for (p = sessions_head; p != NULL; p = p->next) {
+                n = sendto(sockfd, buf, 1 + strlen(&buf[1]), 0,
+                       (struct sockaddr *)&p->sa, sizeof(struct sockaddr_in));
+                if (n == -1) {
+                        perror("sendto");
+                        return -1;
+                }
+                fprintf(stderr, "keepalive %s - %s:%d\n",
+                        p->name,
+                        inet_ntoa(p->sa.sin_addr),
+                        ntohs(p->sa.sin_port));
+        }
+
+        return 0;
+}
+

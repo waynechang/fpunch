@@ -14,23 +14,27 @@
 
 int fpunchd_receive(int serverfd)
 {
-	int rv;
 	fd_set rfds;
+        struct timeval tv;
+	int rv;
+
+        tv.tv_sec = 1;
+        tv.tv_usec = 0;
 
 	FD_ZERO(&rfds);
 	FD_SET(serverfd, &rfds);
 
-	rv = select(serverfd + 1, &rfds, NULL, NULL, NULL);
+	rv = select(serverfd + 1, &rfds, NULL, NULL, &tv);
 	if (rv == -1) {
 		perror("select");
 		return -1;
-	}
-
-	rv = fpunchd_process(serverfd);
-	if (rv == -1) {
-		fprintf(stderr, "fpunch_process() failed\n");
-		return -1;
-	}
+	} else if (rv > 0) {
+                rv = fpunchd_process(serverfd);
+                if (rv == -1) {
+                        fprintf(stderr, "fpunch_process() failed\n");
+                        return -1;
+                }
+        }
 
 	return 0;
 }
@@ -64,6 +68,13 @@ int fpunchd_listen(uint16_t port)
 		if (rv == -1) {
 			fprintf(stderr, "fpunch_receive() failed\n");
 		}
+
+                /*
+                rv = session_keepalive();
+                if (rv == -1) {
+                        fprintf(stderr, "session_keepalive() failed\n");
+                }
+                */
 	}
 
 	rv = close(serverfd);
