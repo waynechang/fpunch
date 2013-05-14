@@ -26,7 +26,7 @@ int reply(char state, const char *msg, size_t len,
 	assert(len < BUF_LEN - 1);
 	memcpy(&buf[1], msg, len);
 
-	n = sendto(serverfd, buf, len, 0,
+	n = sendto(serverfd, buf, 1 + len, 0,
 		   (struct sockaddr *)client, sizeof(struct sockaddr_in));
 	if (n == -1) {
 		perror("sendto");
