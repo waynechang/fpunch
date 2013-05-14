@@ -40,6 +40,7 @@ int bindr3(int sockfd, struct sockaddr_in *addr)
 	int rv, tries = 0;
 	uint16_t port;
 
+	srand(time(0));
 	memset(addr, 0, sizeof(struct sockaddr_in));
 	addr->sin_family = AF_INET;
 	addr->sin_addr.s_addr = htonl(INADDR_ANY);
@@ -52,6 +53,7 @@ int bindr3(int sockfd, struct sockaddr_in *addr)
 			tries++;
 			continue;
 		}
+		fprintf(stderr, "Binded to port %d!\n", port);
 		break;
 	} while (tries < 3);
 
