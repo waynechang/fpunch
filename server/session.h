@@ -6,8 +6,9 @@
 #define SESSION_NAME_LEN 64
 #define SESSION_MAX      32
 
-#define STATE_LISTEN	 0
-#define STATE_TRANSFER	 1
+#define STATE_ACK	 0
+#define STATE_LISTEN	 1
+#define STATE_TRANSFER	 2
 
 typedef struct session {
 	char name[SESSION_NAME_LEN];

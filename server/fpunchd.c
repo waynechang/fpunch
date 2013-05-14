@@ -10,46 +10,9 @@
 #include <errno.h>
 #include <assert.h>
 #include "fpunchd.h"
-#include "session.h"
+#include "process.h"
 
-#define BUF_LEN 512
-
-int fpunch_process(int serverfd)
-{
-	char buf[512];
-	session s;
-	struct sockaddr_in client;
-	socklen_t client_len;
-	ssize_t n;
-	size_t len;
-
-	client_len = sizeof(client);
-	n = recvfrom(serverfd, buf, BUF_LEN, 0,
-		     (struct sockaddr *)&client,
-		     &client_len);
-	if (n == -1) {
-		perror("recvfrom");
-		return -1;
-	}
-
-	assert(SESSION_NAME_LEN < BUF_LEN);
-
-	len = strnlen(buf, SESSION_NAME_LEN);
-	if (len == SESSION_NAME_LEN) {
-		buf[len] = '\0';
-	}
-
-	memset(&s, 0, sizeof(session));
-	strcpy(s.name, buf);
-	memcpy(&s.sa, &client, sizeof(struct sockaddr));
-	s.state = STATE_LISTEN;
-
-	session_add(&s);
-	session_print(stdout);
-	return 0;
-}
-
-int fpunch_select(int serverfd)
+int fpunch_receive(int serverfd)
 {
 	int rv;
 	fd_set rfds;
@@ -97,9 +60,9 @@ int fpunch_listen(uint16_t port)
 	}
 
 	for (;;) {
-		rv = fpunch_select(serverfd);
+		rv = fpunch_receive(serverfd);
 		if (rv == -1) {
-			fprintf(stderr, "fpunch_select() failed\n");
+			fprintf(stderr, "fpunch_receive() failed\n");
 			return -1;
 		}
 	}
