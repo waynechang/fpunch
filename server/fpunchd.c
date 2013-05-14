@@ -63,7 +63,6 @@ int fpunch_listen(uint16_t port)
 		rv = fpunch_receive(serverfd);
 		if (rv == -1) {
 			fprintf(stderr, "fpunch_receive() failed\n");
-			return -1;
 		}
 	}
 

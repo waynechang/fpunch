@@ -4,17 +4,20 @@
 #include <netinet/in.h>
 
 #define SESSION_NAME_LEN 64
-#define SESSION_MAX      32
 
-#define STATE_ACK	 0
-#define STATE_LISTEN	 1
-#define STATE_TRANSFER	 2
+#define STATE_SYN	0
+#define STATE_ACK	1
+#define STATE_LISTEN	2
+#define STATE_TRANSFER	3
+#define STATE_FIN	4
+#define STATE_SEND	5
+#define STATE_ERROR	6
 
 typedef struct session {
 	char name[SESSION_NAME_LEN];
 	struct sockaddr_in sa;
 	struct timeval checkin;
-	int state;
+	char state;
 
 	struct session *next;
 } session;

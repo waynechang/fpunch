@@ -91,14 +91,16 @@ int session_print(FILE *fp)
 {
 	session *p;
 	int i;
+	fprintf(fp, "========== [sessions] ==========\n");
 	for (i = 0, p = sessions_head; p != NULL; p = p->next, i++) {
-		fprintf(fp, "%02d | %32s | %15s:%08d | %d\n",
+		fprintf(fp, "%02d | %16s | %15s:%d (%d)\n",
 			i,
 			p->name,
 			inet_ntoa(p->sa.sin_addr),
 			ntohs(p->sa.sin_port),
 			p->state);
 	}
+	fprintf(fp, "======== [end sessions] ========\n");
 
 	return 0;
 }
