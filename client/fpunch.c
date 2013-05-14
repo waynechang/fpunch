@@ -52,6 +52,7 @@ int bindr3(int sockfd, struct sockaddr_in *addr)
 			tries++;
 			continue;
 		}
+		fprintf(stderr, "Binded to port %d!\n", port);
 		break;
 	} while (tries < 3);
 
